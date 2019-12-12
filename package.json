@@ -1,8 +1,8 @@
 {
-  "name": "black-dashboard-react",
+  "name": "Banq Linked",
   "version": "1.0.0",
   "private": true,
-  "homepage": "https://creativetimofficial.github.io/black-dashboard-react/#/dashboard",
+  "homepage": "/",
   "dependencies": {
     "@daisypayments/react-metamask": "^0.4.1",
     "@types/react": "16.4.16",
