@@ -231,7 +231,8 @@ class Admin extends React.Component {
     }
     return "Brand";
   };
-  render() {
+
+  async getWeb3Data () {
     if (this.state.web3Available === "true" && this.state.coinbase === "0x"
         && this.state.networkID === 3) {
       //Get coinbase and ETH balance for user
@@ -258,26 +259,31 @@ class Admin extends React.Component {
         (result => this.setState({rateUSD: (result)})));
       //Get liquidation groups
       if (this.state.liqRange.length === 0) {
-        for (var z = 0; z < 200; z++) {
-          this.state.instanceColl.methods._LiqRange(z).call().then(
-            (result => this.state.liqRange.push(result)));
-      }}
+        for (var z = 0; z < 100; z++) {
+          await this.state.instanceColl.methods._LiqRange(z).call().then(
+              (result => this.setState({liqRange: this.state.liqRange.concat(result)})
+          ));
+        }}
     }
     if (this.state.web3Available === "true" && this.state.coinbase !== "0x"
-        && this.state.promiseCPs.length < 50
+        && this.state.promiseCPs.length < 100
         && this.state.networkID === 3) {
-          for (var i = 0; i < 50; i++) {
-            this.state.promiseCPs.push(
+          for (var i = 0; i < 100; i++) {
+            await this.state.promiseCPs.push(
               this.state.instanceColl.methods.CP(this.state.coinbase, i).call())}
     }
     if (this.state.promiseCPs.length > 0 && this.state.individualCPs.length === 0
         && this.state.networkID === 3) {
-      while (x < 50) {
-        this.state.promiseCPs[x].then(result =>
+      while (x < 100) {
+        await this.state.promiseCPs[x].then(result =>
           this.state.individualCPs.push(result)
         )
         x += 1;}
     }
+  }
+
+  render() {
+    this.getWeb3Data()
     return (
       <>
         <div className="wrapper">

@@ -19,7 +19,7 @@ import React from "react";
 // nodejs library that concatenates classes
 import classNames from "classnames";
 // react plugin used to create charts
-import { Line, Bar } from "react-chartjs-2";
+import { defaults,  Line, Bar } from "react-chartjs-2";
 
 // reactstrap components
 import {
@@ -40,11 +40,15 @@ import {
   linkedTokens
 } from "../variables/charts.jsx";
 
+// Disable animating charts by default.
+defaults.global.animation = false;
+
 class Economics extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      bigChartData: "data1"
+      bigChartData: "data1",
+      charsLoaded: false,
     };
   }
   setBgChartData = name => {
