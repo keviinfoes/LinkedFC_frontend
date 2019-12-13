@@ -275,7 +275,7 @@ class Admin extends React.Component {
     if (this.state.promiseCPs.length > 0 && this.state.individualCPs.length === 0
         && this.state.networkID === 3) {
       while (x < 100) {
-        this.state.promiseCPs[x].then(result =>
+        await this.state.promiseCPs[x].then(result =>
           this.state.individualCPs.push(result)
         )
         x += 1;}
