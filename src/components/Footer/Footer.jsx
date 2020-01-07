@@ -26,11 +26,19 @@ import { Container, Row, Nav, NavItem, NavLink, UncontrolledAlert,
 
 class Footer extends React.Component {
   render() {
+    var url = "https://github.com/keviinfoes/LinkedFC_backend";
     return (
       <footer className="footer">
         <Container fluid>
           <Nav>
-            
+          <NavItem>
+              <NavLink
+                href={url}
+                target="_blank"
+              >
+                Github
+              </NavLink>
+            </NavItem>
           </Nav>
         </Container>
       </footer>

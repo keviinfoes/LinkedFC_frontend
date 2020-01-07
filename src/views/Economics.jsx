@@ -94,7 +94,7 @@ class Economics extends React.Component {
                             ETH
                           </span>
                           <span className="d-block d-sm-none">
-                            <i className="tim-icons icon-single-02" />
+                            <i className="fas fa-dollar-sign" />
                           </span>
                         </Button>
                         <Button
@@ -116,7 +116,7 @@ class Economics extends React.Component {
                             LUSD
                           </span>
                           <span className="d-block d-sm-none">
-                            <i className="tim-icons icon-gift-2" />
+                            <i className="fas fa-euro-sign" />
                           </span>
                         </Button>
                         <Button
@@ -138,7 +138,7 @@ class Economics extends React.Component {
                             CPs
                           </span>
                           <span className="d-block d-sm-none">
-                            <i className="tim-icons icon-tap-02" />
+                            <i className="tim-icons icon-bank" />
                           </span>
                         </Button>
                       </ButtonGroup>

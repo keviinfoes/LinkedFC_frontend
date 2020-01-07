@@ -19,6 +19,7 @@ import Dashboard from "./views/Dashboard.jsx";
 import Economics from "./views/Economics.jsx";
 import Vault from "./views/Vault.jsx";
 import Liquidations from"./views/Liquidations.jsx";
+import Exchange from "./views/Exchange.jsx";
 
 var routes = [
   {
@@ -33,6 +34,13 @@ var routes = [
     name: "Collateral",
     icon: "tim-icons icon-coins",
     component: Vault,
+    layout: "/admin"
+  },
+  {
+    path: "/exchange",
+    name: "Exchange",
+    icon: "tim-icons icon-money-coins",
+    component: Exchange,
     layout: "/admin"
   },
   {

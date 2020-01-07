@@ -33,11 +33,11 @@ import {
   FormGroup,
   Input,
   Modal,
-  Label,
   Form,
   InputGroup,
   InputGroupAddon,
   InputGroupText,
+  UncontrolledTooltip,
 } from "reactstrap";
 
 class Vault extends React.Component {
@@ -165,27 +165,6 @@ class Vault extends React.Component {
                                          {from: result}))};
     this.setState({formModal_CP: !this.state.formModal_CP});
   };
-  getEarnings = (modalState, id) => {
-    const web3 = this.props.web3;
-    const instanceTax = this.props.instanceTax;
-    if (this.props.web3Available !== "false") {
-      web3.eth.getCoinbase().then(result =>
-        instanceTax.methods.balanceOfInterest(result, id).call().then(
-          (result => this.setState({pendingEarnings: (result),
-                                    claimID: id}))
-    ))}
-    this.setState({[modalState]: !this.state[modalState]});
-  };
-  claimEarnings = () => {
-    const web3 = this.props.web3;
-    const instanceColl = this.props.instanceColl;
-    let temp_id = this.state.claimID;
-    if (this.props.web3Available !== "false") {
-      web3.eth.getCoinbase().then(result =>
-        instanceColl.methods.interestClaim(temp_id).send(
-                                        {from: result}))};
-    this.toggleModal("formModal_Claim");
-  }
   renderTableData() {
     if(this.props.indexCP > 0){
       var index = this.props.indexCP;
@@ -193,167 +172,81 @@ class Vault extends React.Component {
       var rows = [];
       if (this.props.individualCPs.length > 0) {
         for(var i = 0; i < index; i++) {
-          CP[i+1] = this.props.individualCPs[i];
-          if(this.state.closedCPs === true) {
-          rows[i] = (
+          CP[i] = this.props.individualCPs[i];
+          if (CP[i] !== undefined) {
+            rows[i] = (
              <tr key={i}>
                <td>{i+1}</td>
-               <td>{CP[i+1][2] === true ? ("closed"):("open")}</td>
-               <td>{(CP[i+1][1]/10**20).toLocaleString(
+               <td>{CP[i][1] < 1 ? ("closed"):("open")}</td>
+               <td>{(CP[i][1]/10**20).toLocaleString(
                          undefined, {minimumFractionDigits: 2,
                                      maximumFractionDigits:2})} LUSD
                </td>
-               {CP[i+1][2] === true ? (<td/>):(
+               {CP[i][2] === 0 ? (<td/>):(
                <td>
                   <Button
                     className="btn-link"
                     color="info"
-                    onClick={this.toggleModal.bind("", "formModal_CP", i, CP[i+1][1], CP[i+1][0], "burn tokens")}
+                    onClick={this.toggleModal.bind("", "formModal_CP", i, CP[i][1], CP[i][0], "burn tokens")}
                   >
                   burn
                   </Button> |
                   <Button
                     className="btn-link"
                     color="info"
-                    onClick={this.toggleModal.bind("", "formModal_CP", i, CP[i+1][1], CP[i+1][0], "mint tokens")}
+                    onClick={this.toggleModal.bind("", "formModal_CP", i, CP[i][1], CP[i][0], "mint tokens")}
                   >
                   mint
                   </Button>
                </td>)}
-               <td>{(CP[i+1][0]/10**18).toLocaleString(
+               <td>{(CP[i][0]/10**18).toLocaleString(
                          undefined, {minimumFractionDigits: 2,
                                      maximumFractionDigits:2})} ETH</td>
 
-               {CP[i+1][2] === true ? (<td/>):(<td>
+               {CP[i][2] === true ? (<td/>):(<td>
                   <Button
                     className="btn-link"
                     color="info"
-                    onClick={this.toggleModal.bind("", "formModal_CP", i, CP[i+1][1], CP[i+1][0], "deposit ETH")}
+                    onClick={this.toggleModal.bind("", "formModal_CP", i, CP[i][1], CP[i][0], "deposit ETH")}
                   >
                   deposit
                   </Button> |
                   <Button
                     className="btn-link"
                     color="info"
-                    onClick={this.toggleModal.bind("", "formModal_CP", i, CP[i+1][1], CP[i+1][0], "withdraw ETH")}
+                    onClick={this.toggleModal.bind("", "formModal_CP", i, CP[i][1], CP[i][0], "withdraw ETH")}
                   >
                   withdraw
                   </Button>
                   </td>)}
                <td className="text-center">
-                   {isNaN((CP[i+1][1]/10**20)/(CP[i+1][0]/10**18)) ? (
+                   {isNaN((CP[i][1]/10**20)/(CP[i][0]/10**18)) ? (
                        <div> 0,00 USD </div>
                      ):(
-                       <div>{((CP[i+1][1]/10**20)/(CP[i+1][0]/10**18) * 1.5).toLocaleString(
+                       <div>{((CP[i][1]/10**20)/(CP[i][0]/10**18) * 1.5).toLocaleString(
                            undefined, {minimumFractionDigits: 2,
                                        maximumFractionDigits:2})} USD
                        </div>
                    )}
                </td>
-               {CP[i+1][2] === true ? (<td/>):(
-                 <td>
-                  <Button
-                    className="btn-link"
-                    color="info"
-                    onClick={this.getEarnings.bind("", "formModal_Claim", i)}
-                  >
-                  claim earnings
-                  </Button>
-                 </td>)}
-               {CP[i+1][2] === true ? (<td/>):(
+               {CP[i][2] === true ? (<td/>):(
                 <td>
                 <Button
                   className="btn-link tim-icons icon-send"
                   color="success"
-                  onClick={this.toggleModal.bind("", "formModal", i, CP[i+1][1], CP[i+1][0])}
+                  onClick={this.toggleModal.bind("", "formModal", i, CP[i][1], CP[i][0])}
                 />
                <Button
                  className="btn-link tim-icons icon-simple-remove"
                  color="danger"
-                 onClick={this.toggleModal.bind("", "miniModal", i, CP[i+1][1], CP[i+1][0])}
+                 onClick={this.toggleModal.bind("", "miniModal", i, CP[i][1], CP[i][0])}
                />
                </td>)}
              </tr>
-          )} else {
-          if (CP[i+1][2] === false) {
-           rows[i] = (
-              <tr key={i}>
-                <td>{i+1}</td>
-                <td>{CP[i+1][2] === true ? ("closed"):("open")}</td>
-                <td>{(CP[i+1][1]/10**20).toLocaleString(
-                          undefined, {minimumFractionDigits: 2,
-                                      maximumFractionDigits:2})} LUSD</td>
-
-                <td>
-                <Button
-                  className="btn-link"
-                  color="info"
-                  onClick={this.toggleModal.bind("", "formModal_CP", i, CP[i+1][1], CP[i+1][0], "burn tokens")}>
-                  burn
-                </Button> |
-                <Button
-                  className="btn-link"
-                  color="info"
-                  onClick={this.toggleModal.bind("", "formModal_CP", i, CP[i+1][1], CP[i+1][0], "mint tokens")}>
-                  mint
-                </Button>
-                 </td>
-
-                <td>{(CP[i+1][0]/10**18).toLocaleString(
-                          undefined, {minimumFractionDigits: 2,
-                                      maximumFractionDigits:2})} ETH</td>
-
-                <td>
-                <Button
-                  className="btn-link"
-                  color="info"
-                  onClick={this.toggleModal.bind("", "formModal_CP", i, CP[i+1][1], CP[i+1][0], "deposit ETH")}>
-                  deposit
-                </Button> |
-                <Button
-                  className="btn-link"
-                  color="info"
-                  onClick={this.toggleModal.bind("", "formModal_CP", i, CP[i+1][1], CP[i+1][0], "withdraw ETH")}>
-                  withdraw
-                </Button>
-                </td>
-
-                <td className="text-center">
-                    {isNaN((CP[i+1][1]/10**20)/(CP[i+1][0]/10**18)) ? (
-                        <div> 0,00 USD </div>
-                      ):(
-                        <div>{((CP[i+1][1]/10**20)/(CP[i+1][0]/10**18) * 1.5).toLocaleString(
-                            undefined, {minimumFractionDigits: 2,
-                                        maximumFractionDigits:2})} USD
-                        </div>
-                    )}
-                </td>
-                <td>
-                  <Button
-                    className="btn-link"
-                    color="info"
-                    onClick={this.getEarnings.bind("", "formModal_Claim", i)}
-                  >
-                  claim earnings
-                  </Button>
-                </td>
-                <td>
-                <Button
-                  className="btn-link tim-icons icon-send"
-                  color="success"
-                  onClick={this.toggleModal.bind("", "formModal", i, CP[i+1][1], CP[i+1][0], "Transfer")}
-                />
-                <Button
-                  className="btn-link tim-icons icon-simple-remove"
-                  color="danger"
-                  onClick={this.toggleModal.bind("", "miniModal", i, CP[i+1][1], CP[i+1][0])}
-                />
-                </td>
-              </tr>
-          )}}
-
-        }} return (rows)}
+           )}}
+      } return (rows)}
   }
+
   render() {
     var change_tokens = this.state.dataMiniModal[1]/10**20;
     if (this.state.dataMiniModal[3] === "burn tokens") {
@@ -383,15 +276,6 @@ class Vault extends React.Component {
             <Card>
               <CardHeader>
                 <CardTitle tag="h4">Collateral Positions</CardTitle>
-                    <FormGroup check>
-                        <Label check>
-                            <Input
-                            type="checkbox"
-                            onClick = {this.filterCP}/>
-                                <span className="form-check-sign" />
-                                Show closed
-                        </Label>
-                    </FormGroup>
               </CardHeader>
               <Col md="12">
               <CardBody>
@@ -421,7 +305,20 @@ class Vault extends React.Component {
                                           maximumFractionDigits:2})} USD</td>
                   </tr>
                   <tr>
-                  <td>interest earnings: 1,5% per year</td>
+                  <td
+                   id="tooltip789511872"
+                  >
+                  interest earnings: 1,5% per year</td>
+
+                  <UncontrolledTooltip
+                    delay={0}
+                    placement="bottom"
+                    target="tooltip789511872"
+                  >
+                  The interest automatically decreases the CP token debt
+                  every block.
+                  </UncontrolledTooltip>
+
                   </tr>
                 </tbody>
                 </table>
@@ -466,7 +363,7 @@ class Vault extends React.Component {
                             USD
                           </span>
                           <span className="d-block d-sm-none">
-                            <i className="tim-icons icon-single-02" />
+                            <i className="fas fa-dollar-sign" />
                           </span>
                         </Button>
                         <Button
@@ -487,7 +384,7 @@ class Vault extends React.Component {
                             EURO
                           </span>
                           <span className="d-block d-sm-none">
-                            <i className="tim-icons icon-gift-2" />
+                            <i className="fas fa-euro-sign" />
                           </span>
                         </Button>
                         <Button
@@ -508,7 +405,7 @@ class Vault extends React.Component {
                             GOLD
                           </span>
                           <span className="d-block d-sm-none">
-                            <i className="tim-icons icon-tap-02" />
+                            <i className="tim-icons icon-bank" />
                           </span>
                         </Button>
                       </ButtonGroup>
@@ -869,51 +766,6 @@ class Vault extends React.Component {
               </div>
             </Modal>
             {/* End Form Modal Adjust CP */}
-            {/* Start Mini Modal Claim */}
-              <Modal
-                modalClassName="modal-mini modal-info modal-mini"
-                isOpen={this.state.formModal_Claim}
-                toggle={() => this.toggleModal("formModal_Claim")}
-              >
-                <div className="modal-header justify-content-center">
-                  <button
-                    className="close"
-                    onClick={() => this.toggleModal("formModal_Claim")}
-                  >
-                    <i className="tim-icons icon-simple-remove text-white" />
-                  </button>
-                  <div className="modal-profile">
-                  <h3 className="mb-0">
-                    Earnings Collateral position {this.state.claimID+1}
-                  </h3>
-                  </div>
-                </div>
-                <div className="modal-body text-center">
-                  <div/>
-                  <p>Earnings: {(this.state.pendingEarnings/10**20).toLocaleString(
-                                undefined, {minimumFractionDigits: 2,
-                                            maximumFractionDigits:20})} LUSD</p>
-                </div>
-                <div className="modal-footer">
-                  <Button
-                    className="btn-neutral"
-                    color="link"
-                    type="button"
-                    onClick={this.claimEarnings}
-                  >
-                  Claim
-                  </Button>
-                  <Button
-                    className="btn-neutral"
-                    color="link"
-                    onClick={() => this.toggleModal("formModal_Claim")}
-                    type="button"
-                  >
-                  Cancel
-                  </Button>
-                </div>
-              </Modal>
-              {/* End Mini Modal Claim*/}
         </div>
       </>
     );
