@@ -36,6 +36,7 @@ class Liquidations extends React.Component {
       liqActive: [],
       miniModal: false,
       userCP: "",
+      liqRange: [],
     };
   }
   componentDidMount() {
@@ -76,29 +77,34 @@ class Liquidations extends React.Component {
    };
   renderTableGroupData() {
     var rows = [];
-    for (var i = 0; i < this.props.liqGroups.length; i++) {
+    if (this.props.loop === 49) {
+     for (var i = 0; i < this.props.liqGroups.length; i++) {
       if (this.props.liqGroups[i] > 0){
         rows[i] = (
           <tr key={i}>
+
             <td>{i*10} - {(i + 1) *10} USD</td>
             <td>{this.props.liqGroups[i]} CPs</td>
           </tr>
-        )}
+        )};
     }
     return (rows);
+  } else {return(<tr><td>loading liquidation groups</td><td/></tr>)}
   }
+
   renderTableActiveLiqData() {
     var rowsActive = [];
     var liqrate = this.props.rateUSD/1000
-
     var index = 0;
       for (var i = liqrate; i < this.props.liqGroups.length; i++) {
         if (this.props.liqGroups[i] > 0){
           index = index + (this.props.liqGroups[i] * 1);
         }
       }
-      if (index > 0) {
-        for (var n = 0; n < index; n++) {
+
+        if (index > 0) {
+          if (this.props.loop === 49) {
+          for (var n = 0; n < index; n++) {
               rowsActive[n] = (
                   <tr key={n}>
                       <td>{n+1}</td>
@@ -119,7 +125,9 @@ class Liquidations extends React.Component {
                         </td>
                         ):(<td></td>)}
                   </tr>);
-        } return (rowsActive);
+        }
+          return (rowsActive);
+        } else {return(<tr><td>loading active liquidations</td><td/></tr>)}
       } else {
         return (<tr><td>No active liquidations </td>
                 <td></td><td></td></tr>)

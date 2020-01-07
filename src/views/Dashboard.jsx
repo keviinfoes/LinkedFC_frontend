@@ -31,6 +31,7 @@ import {
   Col,
   FormGroup,
   Input,
+  UncontrolledTooltip,
 } from "reactstrap";
 
 class Dashboard extends React.Component {
@@ -87,7 +88,17 @@ class Dashboard extends React.Component {
               <CardBody>
               <h4 className="card-category"><Col lg="8">Balance ETH: {this.props.balanceETH}</Col></h4>
               <Col md="12">
-              Stability tax: 2% LUSD per year
+              <p
+               id="tooltip789511871"
+              >
+              Stability tax: 2% LUSD per year</p>
+              <UncontrolledTooltip
+                delay={0}
+                placement="bottom"
+                target="tooltip789511871"
+              >
+              The tax is automatically deducted every block.
+              </UncontrolledTooltip>
               </Col>
               </CardBody>
             </Card>
@@ -157,7 +168,7 @@ class Dashboard extends React.Component {
                           USD
                         </span>
                         <span className="d-block d-sm-none">
-                          <i className="tim-icons icon-single-02" />
+                          <i className="fas fa-dollar-sign" />
                         </span>
                       </Button>
                       <Button
@@ -178,7 +189,7 @@ class Dashboard extends React.Component {
                           EURO
                         </span>
                         <span className="d-block d-sm-none">
-                          <i className="tim-icons icon-gift-2" />
+                          <i className="fas fa-euro-sign" />
                         </span>
                       </Button>
                       <Button
@@ -199,7 +210,7 @@ class Dashboard extends React.Component {
                           GOLD
                         </span>
                         <span className="d-block d-sm-none">
-                          <i className="tim-icons icon-tap-02" />
+                          <i className="tim-icons icon-bank" />
                         </span>
                       </Button>
                     </ButtonGroup>
