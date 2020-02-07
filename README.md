@@ -1,7 +1,7 @@
 # LinkedFC-frontend
 This repository contains a react front end for linked, the full collateralized stablecoin with minimal complexity.
 
-To test alpha v0.2 visit: [banq.link](https://banq.link).
+To test alpha v0.3 visit: [banq.link](https://banq.link).
 
 ## Instructions deployment ropsten
 1. Clone this repository.
