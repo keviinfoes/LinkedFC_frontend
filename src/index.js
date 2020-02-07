@@ -20,9 +20,10 @@ import ReactDOM from "react-dom";
 import { createBrowserHistory } from "history";
 import { Router, Route, Switch, Redirect } from "react-router-dom";
 
-import AdminLayout from "./layouts/Admin/Admin.jsx";
+import AdminLayout from "./layouts/Admin/Dapp.jsx";
+import Front from "./layouts/Front/Front.jsx";
 
-import "./assets/css/black-dashboard-react.css";
+import "./assets/css/black-dashboard-react-merge.css";
 import "./assets/demo/demo.css";
 import "./assets/css/nucleo-icons.css";
 
@@ -31,8 +32,9 @@ const hist = createBrowserHistory();
 ReactDOM.render(
   <Router history={hist}>
     <Switch>
-      <Route path="/admin" render={props => <AdminLayout {...props} />} />
-      <Redirect from="/" to="/admin/dashboard" />
+      <Route path="/front" render={props => <Front {...props} />} />
+      <Route path="/dapp" render={props => <AdminLayout {...props} />} />
+      <Redirect from="/" to="/front" />
     </Switch>
   </Router>,
   document.getElementById("root")

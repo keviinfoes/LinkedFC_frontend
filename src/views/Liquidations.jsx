@@ -45,7 +45,7 @@ class Liquidations extends React.Component {
       for (var i = liqrate; i < this.props.liqGroups.length; i++) {
         if (this.props.liqGroups[i] > 0){
           for (var n = 0; n < this.props.liqGroups[i]; n++) {
-            this.props.instanceColl.methods._LiqInfo(i, (n + 1)
+            this.props.instanceColl.methods.liqInfo(i, (n + 1)
               ).call().then((result =>
               this.setState({
                 liqActive: this.state.liqActive.concat(result),
@@ -61,7 +61,7 @@ class Liquidations extends React.Component {
     if (owner !== undefined && id !== undefined) {
       if (this.props.web3Available !== "false") {
         web3.eth.getCoinbase().then(result =>
-          instanceColl.methods.CP(owner, id).call().then(
+          instanceColl.methods.cPosition(owner, id).call().then(
             (result => this.setState({userCP: result}))
       ))};
     }
@@ -73,7 +73,9 @@ class Liquidations extends React.Component {
        web3.eth.getCoinbase().then(result =>
          instanceColl.methods.liquidateCP(this.state.dataMiniModal[0],
                                           this.state.dataMiniModal[1]).send(
-                                          {from: result,}))};
+                                          {from: result}).then(result =>
+                                            window.location.reload()
+                                          ))};
    };
   renderTableGroupData() {
     var rows = [];
@@ -82,7 +84,6 @@ class Liquidations extends React.Component {
       if (this.props.liqGroups[i] > 0){
         rows[i] = (
           <tr key={i}>
-
             <td>{i*10} - {(i + 1) *10} USD</td>
             <td>{this.props.liqGroups[i]} CPs</td>
           </tr>
@@ -134,6 +135,9 @@ class Liquidations extends React.Component {
       }
   }
   render() {
+
+    console.log(this.state.liqActive)
+
     return (
       <>
         <div className="content">
@@ -202,9 +206,7 @@ class Liquidations extends React.Component {
                 <i className="tim-icons icon-simple-remove text-white" />
               </button>
               <div className="modal-profile">
-              <h3 className="mb-0">
-                Remove Collateral position
-              </h3>
+                  <i className="tim-icons icon-trash-simple" />
               </div>
             </div>
             <div className="modal-body text-center">
@@ -224,7 +226,7 @@ class Liquidations extends React.Component {
                 type="button"
                 onClick={this.liquidateCP}
               >
-              Liquidate
+               Liquidate
               </Button>
               <Button
                 className="btn-neutral"
@@ -232,7 +234,7 @@ class Liquidations extends React.Component {
                 onClick={() => this.toggleModal("miniModal")}
                 type="button"
               >
-                Cancel
+               Cancel
               </Button>
             </div>
           </Modal>

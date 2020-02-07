@@ -49,6 +49,7 @@ class Admin extends React.Component {
       metamask: true,
       unlocked: "",
       networkID: "",
+      instanceProxy: "",
       instanceToken: "",
       instanceColl: "",
       instanceExch: "",
@@ -66,6 +67,9 @@ class Admin extends React.Component {
       liquidityTokens: 0,
       claimETH: 0,
       claimTokens: 0,
+
+      CPtest: [],
+
     };
   }
   componentDidMount() {
@@ -78,14 +82,16 @@ class Admin extends React.Component {
         ps = new PerfectScrollbar(tables[i]);
       }
     }
+    const ProxyLinked = require("../../web3/LinkedPROXY.json");
+    const proxyaddress = "0x8BCcDa0e784BC60DDC545B40A752D486FC8250fB";
     const TokenLinked = require("../../web3/LinkedTKN.json");
-    const tokenaddress = "0x6B2dF5E744ccCC94c5B1c01BF8349b543594157c";
+    const tokenaddress = "0x1D42651aed782d3e0722310E31C46a522E2828d1";
     const CollateralLinked = require("../../web3/LinkedCOL.json");
-    const colladdress = "0x3AA50B60A7a54EA6950f9f074E81FbF86d893352";
+    const colladdress = "0x3f67DdB5D43e85A2d4Bb28C67A8F0f010Af15dBd";
     const TaxLinked = require("../../web3/LinkedTAX.json");
-    const taxaddress = "0xC9c0E917F7Fd6B02d0751112Dc7e2DbC1Bf49D2D";
+    const taxaddress = "0xaa5163F5346651C2Bc618cD81Ce45229e765c8a3";
     const ExchangeLinked = require("../../web3/LinkedEXC.json");
-    const exchangeaddress = "0x6417573b78b8d3E4Ba756c02b7Fc975348213333";
+    const exchangeaddress = "0x1524D19638E2B1B8b8B010196d5c705A74581738";
     if (window.ethereum) {
         window.ethereum.autoRefreshOnNetworkChange = false;
         web3 = new Web3(window.ethereum);
@@ -95,6 +101,8 @@ class Admin extends React.Component {
             window.ethereum.enable().then(
               result => this.setState({unlocked: result}),
               this.setState({web3Available: "true"}),
+              this.setState({instanceProxy: new web3.eth.Contract(ProxyLinked.abi,
+                        proxyaddress)}),
               this.setState({instanceToken: new web3.eth.Contract(TokenLinked.abi,
                         tokenaddress)}),
               this.setState({instanceColl: new web3.eth.Contract(CollateralLinked.abi,
@@ -112,6 +120,8 @@ class Admin extends React.Component {
         web3.eth.net.getId().then(netId => this.setState({networkID: netId}));
         if (this.state.networkID === "" || this.state.networkID === 3) {
             this.setState({web3Available: "true"});
+            this.setState({instanceProxy: new web3.eth.Contract(ProxyLinked.abi,
+                      proxyaddress)});
             this.setState({instanceToken: new web3.eth.Contract(TokenLinked.abi,
                     tokenaddress)});
             this.setState({instanceColl: new web3.eth.Contract(CollateralLinked.abi,
@@ -147,7 +157,10 @@ class Admin extends React.Component {
       document.scrollingElement.scrollTop = 0;
       this.refs.mainPanel.scrollTop = 0;
     }
-    this.getWeb3Data();
+
+    window.addEventListener('scroll', this.getWeb3Data());
+
+
   }
   // this function opens and closes the sidebar on small devices
   toggleSidebar = () => {
@@ -156,7 +169,7 @@ class Admin extends React.Component {
   };
   getRoutes = routes => {
     return routes.map((prop, key) => {
-      if (prop.layout === "/admin") {
+      if (prop.layout === "/dapp") {
         if (prop.path === "/dashboard") {
           return (
             <Route
@@ -172,8 +185,8 @@ class Admin extends React.Component {
               key={key}
             />);
         } else if (prop.path === "/collateral") {
-        return (
-          <Route
+          return (
+           <Route
             path={prop.layout + prop.path}
             component={() => <Vault
                                 web3={web3}
@@ -268,6 +281,7 @@ class Admin extends React.Component {
     return "Brand";
   };
   async getWeb3Data () {
+   var CPdata = [];
    if (this.state.unlocked !== ""){
     if (this.state.web3Available === "true" && this.state.coinbase === "0x"
         && this.state.networkID === 3) {
@@ -277,7 +291,7 @@ class Admin extends React.Component {
       web3.eth.getCoinbase().then(result =>
         web3.eth.getBalance(result).then(
           result => this.setState({balanceETH: (result/10**18).toLocaleString(
-                        undefined, {minimumFractionDigits: 2,
+                        "en", {minimumFractionDigits: 2,
                                     maximumFractionDigits:2})})));
       //Get Token balance for user
       web3.eth.getCoinbase().then(result =>
@@ -291,16 +305,16 @@ class Admin extends React.Component {
         this.state.instanceColl.methods.index(result).call().then(
           (result => this.setState({indexCP: (result)}))));
       //Get current rateUSD
-      this.state.instanceColl.methods.rate().call().then(
+      this.state.instanceProxy.methods.rate().call().then(
         (result => this.setState({rateUSD: (result)})));
       //Get liquidity of exchange
-      web3.eth.getBalance("0x6417573b78b8d3E4Ba756c02b7Fc975348213333").then(
+      web3.eth.getBalance("0x1524D19638E2B1B8b8B010196d5c705A74581738").then(
         result => this.setState({liquidityETH: (result/10**18).toLocaleString(
-                        undefined, {minimumFractionDigits: 2,
+                        "en", {minimumFractionDigits: 2,
                                     maximumFractionDigits:2})}));
-      this.state.instanceToken.methods.balanceOf("0x6417573b78b8d3E4Ba756c02b7Fc975348213333").call().then(
+      this.state.instanceToken.methods.balanceOf("0x1524D19638E2B1B8b8B010196d5c705A74581738").call().then(
         (result => this.setState({liquidityTokens: (result/10**20).toLocaleString(
-                        undefined, {minimumFractionDigits: 2,
+                        "en", {minimumFractionDigits: 2,
                                     maximumFractionDigits:2})})));
       web3.eth.getCoinbase().then(result =>
           this.state.instanceExch.methods.claimOfETH(result).call().then(
@@ -309,17 +323,16 @@ class Admin extends React.Component {
           this.state.instanceExch.methods.claimOfTKN(result).call().then(
             (result => this.setState({claimTokens: (result)}))));
       //Get liquidation groups
-      if (this.state.liqRange.length === 0) {
+      if (this.state.liqRange.length === 0 &&
+          this.props.location.pathname === "/dapp/liquidations") {
         for (var z = 0; z < 50; z++) {
-          var liqrange = await this.state.instanceColl.methods._LiqRange(z).call();
+          var liqrange = await this.state.instanceColl.methods.liqRange(z).call();
           this.setState({liqRange: this.state.liqRange.concat(liqrange),
                          loop: z});
-
         }
       }
+    };
 
-    }
-    var CPdata = [];
     if (this.state.web3Available === "true" && this.state.coinbase !== "0x"
         && this.state.individualCPs[0] === undefined
         && this.state.networkID === 3
@@ -327,7 +340,8 @@ class Admin extends React.Component {
           for (var i = 0; i < this.state.indexCP; i++) {
             CPdata = await this.state.instanceColl.methods.individualCPdata(this.state.coinbase, i).call();
             if (this.state.individualCPs.length === i) {
-              this.state.individualCPs[i] = CPdata
+              var CP = await CPdata;
+              await this.setState({individualCPs: this.state.individualCPs.concat([CP])})
             }
           }
     }};

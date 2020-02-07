@@ -16,6 +16,7 @@
 
 */
 import React from "react";
+import classNames from "classnames";
 
 // reactstrap components
 import {
@@ -40,16 +41,22 @@ class Dashboard extends React.Component {
     this.handleChangeAmountBuyClaim = this.handleChangeAmountBuyClaim.bind(this);
     this.handleChangeAmountSellClaim = this.handleChangeAmountSellClaim.bind(this);
     this.state = {
-      bigChartData: "data1",
+      exchangeDataDep: "TKN",
+      exchangeDataWith: "TKN",
       buyAmount: 0,
       sellAmount: 0,
       buyClaimAmount: 0,
       sellClaimAmount: 0,
     };
   }
-  setBgChartData = name => {
+  setExchDataDep = name => {
     this.setState({
-      bigChartData: name
+      exchangeDataDep: name
+    });
+  };
+  setExchDataWith = name => {
+    this.setState({
+      exchangeDataWith: name
     });
   };
   handleChangeAmountBuy(e) {
@@ -68,74 +75,48 @@ class Dashboard extends React.Component {
         this.setState({sellClaimAmount: (e.target.value * 10**18).toLocaleString(
           'fullwide', { useGrouping: false })});
   }
-  buyTokens = receiver => {
+  depositETH = receiver => {
     const instanceExch = this.props.instanceExch;
     if (this.props.web3Available !== "false") {
-      instanceExch.methods.sellETH().send(
+      instanceExch.methods.depositETH().send(
                                       {from: this.props.coinbase,
-                                      value: this.state.buyAmount})
-                                      };
+                                      value: this.state.buyAmount}).then(result =>
+                                        window.location.reload()
+                                      )};
   };
-  sellTokens = receiver => {
+  depositTKN = receiver => {
     const web3 = this.props.web3;
     const instanceToken = this.props.instanceToken;
     if (this.props.web3Available !== "false") {
       web3.eth.getCoinbase().then(result =>
-        instanceToken.methods.approveExchange(this.state.sellAmount).send(
+        instanceToken.methods.depositExchange(this.state.sellAmount).send(
                                          {from: result,
-                                          value: 0})
-                                        )};
+                                          value: 0}).then(result =>
+                                            window.location.reload()
+                                          ))};
   };
-  claimETH = receiver => {
+  withdrawTKN = receiver => {
     const web3 = this.props.web3;
     const instanceExch = this.props.instanceExch;
     if (this.props.web3Available !== "false") {
       web3.eth.getCoinbase().then(result =>
-        instanceExch.methods.buyTKN(this.state.buyClaimAmount).send(
+        instanceExch.methods.withdrawTKN(this.state.buyClaimAmount).send(
                                          {from: result,
-                                          value: 0})
-                                        )};
+                                          value: 0}).then(result =>
+                                            window.location.reload()
+                                          ))};
   };
-  claimTokens = receiver => {
+  withdrawETH = receiver => {
     const web3 = this.props.web3;
     const instanceExch = this.props.instanceExch;
     if (this.props.web3Available !== "false") {
       web3.eth.getCoinbase().then(result =>
-        instanceExch.methods.buyETH(this.state.sellClaimAmount).send(
+        instanceExch.methods.withdrawETH(this.state.sellClaimAmount).send(
                                          {from: result,
-                                          value: 0})
-                                        )};
+                                          value: 0}).then(result =>
+                                            window.location.reload()
+                                          ))};
   };
-
-
-
-
-// TO DO - ADD REMOVE CLAIM
-//  claimRemoveETH = receiver => {
-//    const web3 = this.props.web3;
-//    const instanceToken = this.props.instanceToken;
-//    if (this.props.web3Available !== "false") {
-//      web3.eth.getCoinbase().then(result =>
-//        instanceToken.methods.transfer(this.state.transferReceiver,
-//                                       this.state.transferAmount).send(
-//                                         {from: result,
-//                                          value: 0})
-//                                        )};
-//  };
-//  claimRemoveTokens = receiver => {
-//    const web3 = this.props.web3;
-//    const instanceToken = this.props.instanceToken;
-//    if (this.props.web3Available !== "false") {
-//      web3.eth.getCoinbase().then(result =>
-//        instanceToken.methods.transfer(this.state.transferReceiver,
-//                                       this.state.transferAmount).send(
-//                                         {from: result,
-//                                          value: 0})
-//                                        )};
-//  };
-
-
-
   render() {
     return (
       <>
@@ -144,12 +125,12 @@ class Dashboard extends React.Component {
           <Col lg="4">
             <Card className="card-chart">
               <CardHeader>
-                <h5 className="card-category">Balance USD</h5>
+                <h5 className="card-category">Balance Wallet</h5>
                 <CardTitle tag="h3">
                   <i className="tim-icons icon-wallet-43 text-info" />{" "}
-                  {isNaN(this.props.balanceTKN) ? ("0,00"
+                  {isNaN(this.props.balanceTKN) ? ("0.00"
                     ):(this.props.balanceTKN/10**20).toLocaleString(
-                                undefined, {minimumFractionDigits: 2,
+                                "en", {minimumFractionDigits: 2,
                                             maximumFractionDigits:2})} LUSD
                 </CardTitle>
               </CardHeader>
@@ -158,7 +139,27 @@ class Dashboard extends React.Component {
               </CardBody>
             </Card>
           </Col>
-          <Col lg="8">
+          <Col lg="4">
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Balance Exchange</h5>
+                <CardTitle tag="h3">
+                  <i className="tim-icons icon-bank text-info" />{" "}
+                  Deposited amounts
+                </CardTitle>
+              </CardHeader>
+              <CardBody>
+              <h4 className="card-category"><Col lg="8">Balance LUSD: {isNaN(this.props.claimTokens) ? ("0.00") : (
+                      (this.props.claimTokens/10**20).toLocaleString(
+                            "en", {minimumFractionDigits: 2,
+                                        maximumFractionDigits:2}))}</Col></h4>
+              <h4 className="card-category"><Col lg="8">Balance ETH: {(this.props.claimETH/10**18).toLocaleString(
+                            "en", {minimumFractionDigits: 2,
+                                        maximumFractionDigits:2})}</Col></h4>
+              </CardBody>
+            </Card>
+          </Col>
+          <Col lg="4">
           <Card>
             <CardHeader>
               <CardTitle tag="h4">Exchange liquidity</CardTitle>
@@ -182,11 +183,17 @@ class Dashboard extends React.Component {
             </CardBody>
           </Col>
           </Card>
-
           </Col>
         </Row>
         <Row>
           <Col lg="6" xs="12">
+
+
+
+
+
+
+
             <Card className="card-chart">
               <CardHeader>
                 <Row>
@@ -194,17 +201,99 @@ class Dashboard extends React.Component {
                     <h5 className="card-category">Exchange</h5>
                     <CardTitle tag="h2">
                       <i className="tim-icons icon-coins text-success" />{" "}
-                      Deposit ETH
+                      Deposit
                     </CardTitle>
+                  </Col>
+                  <Col sm="6">
+                    <ButtonGroup
+                      className="btn-group-toggle float-right"
+                      data-toggle="buttons"
+                    >
+                      <Button
+                        tag="label"
+                        className={classNames("btn-simple", {
+                          active: this.state.exchangeDataDep === "TKN"
+                        })}
+                        color="info"
+                        id="0"
+                        size="sm"
+                        onClick={() => this.setExchDataDep("TKN")}
+                      >
+                        <input
+                          defaultChecked
+                          className="d-none"
+                          name="options"
+                          type="radio"
+                        />
+                        <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block">
+                          LUSD
+                        </span>
+                        <span className="d-block d-sm-none">
+                          <i className="fab fa-ethereum" />
+                        </span>
+                      </Button>
+                      <Button
+                        color="info"
+                        id="1"
+                        size="sm"
+                        tag="label"
+                        className={classNames("btn-simple", {
+                          active: this.state.exchangeDataDep === "ETH"
+                        })}
+                        onClick={() => this.setExchDataDep("ETH")}
+                      >
+                        <input
+                          className="d-none"
+                          name="options"
+                          type="radio"
+                        />
+                        <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block">
+                          ETH
+                        </span>
+                        <span className="d-block d-sm-none">
+                          <i className="fas fa-dollar-sign" />
+                        </span>
+                      </Button>
+                    </ButtonGroup>
                   </Col>
                 </Row>
               </CardHeader>
+              {this.state.exchangeDataDep === "TKN" ? (
+              <CardBody>
+                <Col lg="8">amount LUSD
+                  <FormGroup>
+                    <Input
+                      defaultValue=""
+                      placeholder="0.00"
+                      type="text"
+                      onChange={this.handleChangeAmountSell}
+                    />
+                  </FormGroup>
+                </Col>
+                <ButtonGroup
+                  className="btn-group-toggle float-right"
+                  data-toggle="buttons"
+                >
+                  <Col sm="6">
+                  <Button
+                  className="btn-icon btn-round"
+                  color="success"
+                  type="button"
+                  onClick={this.depositTKN}
+                  >
+                  <i className="tim-icons icon-send" />
+                  </Button>
+                  </Col>
+
+                </ButtonGroup>
+              </CardBody>
+              ):(
               <CardBody>
                 <Col lg="8">amount ETH
                   <FormGroup>
                     <Input
                       defaultValue=""
-                      placeholder="0,00"
+                      placeholder="0.00"
                       type="text"
                       onChange={this.handleChangeAmountBuy}
                     />
@@ -219,39 +308,95 @@ class Dashboard extends React.Component {
                   className="btn-icon btn-round"
                   color="success"
                   type="button"
-                  onClick={this.buyTokens}
+                  onClick={this.depositETH}
                   >
                   <i className="tim-icons icon-send" />
                   </Button>
                   </Col>
                 </ButtonGroup>
-              </CardBody>
+                </CardBody>
+              )}
+            </Card>
+          </Col>
+          <Col lg="6" xs="12">
+            <Card className="card-chart">
               <CardHeader>
                 <Row>
                   <Col className="text-left" sm="6">
+                    <h5 className="card-category">Exchange</h5>
                     <CardTitle tag="h2">
-                      <i className="tim-icons icon-coins text-success" />{" "}
-                      Claim LUSD
+                      <i className="tim-icons icon-coins text-danger" />{" "}
+                      Withdraw
                     </CardTitle>
+                  </Col>
+
+                  <Col sm="6">
+                    <ButtonGroup
+                      className="btn-group-toggle float-right"
+                      data-toggle="buttons"
+                    >
+                      <Button
+                        tag="label"
+                        className={classNames("btn-simple", {
+                          active: this.state.exchangeDataWith === "TKN"
+                        })}
+                        color="info"
+                        id="0"
+                        size="sm"
+                        onClick={() => this.setExchDataWith("TKN")}
+                      >
+                        <input
+                          defaultChecked
+                          className="d-none"
+                          name="options"
+                          type="radio"
+                        />
+                        <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block">
+                          LUSD
+                        </span>
+                        <span className="d-block d-sm-none">
+                          <i className="fab fa-ethereum" />
+                        </span>
+                      </Button>
+                      <Button
+                        color="info"
+                        id="1"
+                        size="sm"
+                        tag="label"
+                        className={classNames("btn-simple", {
+                          active: this.state.exchangeDataWith === "ETH"
+                        })}
+                        onClick={() => this.setExchDataWith("ETH")}
+                      >
+                        <input
+                          className="d-none"
+                          name="options"
+                          type="radio"
+                        />
+                        <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block">
+                          ETH
+                        </span>
+                        <span className="d-block d-sm-none">
+                          <i className="fas fa-dollar-sign" />
+                        </span>
+                      </Button>
+                    </ButtonGroup>
                   </Col>
                 </Row>
               </CardHeader>
+              {this.state.exchangeDataWith === "TKN" ? (
               <CardBody>
                 <h5 className="card-category"><Col lg="8">
-                  Deposited ETH: {(this.props.claimETH/10**18).toLocaleString(
-                                undefined, {minimumFractionDigits: 2,
-                                            maximumFractionDigits:2})}
-                </Col></h5>
-                <h5 className="card-category"><Col lg="8">
-                  Claim LUSD available: {(this.props.claimETH*this.props.rateUSD/10**20).toLocaleString(
-                                undefined, {minimumFractionDigits: 2,
-                                            maximumFractionDigits:2})}
+                  Maximum LUSD withdraw available: {((this.props.claimETH*this.props.rateUSD/10**20)
+                                                      +(this.props.claimTokens/10**20)).toLocaleString(
+                                                      "en", {minimumFractionDigits: 2,
+                                                        maximumFractionDigits:2})}
                 </Col></h5>
                 <Col lg="8">amount LUSD
                   <FormGroup>
                     <Input
                       defaultValue=""
-                      placeholder="0,00"
+                      placeholder="0.00"
                       type="text"
                       onChange={this.handleChangeAmountBuyClaim}
                     />
@@ -266,83 +411,27 @@ class Dashboard extends React.Component {
                   className="btn-icon btn-round"
                   color="success"
                   type="button"
-                  onClick={this.claimETH}
+                  onClick={this.withdrawTKN}
                   >
                   <i className="tim-icons icon-send" />
                   </Button>
                   </Col>
                 </ButtonGroup>
               </CardBody>
-            </Card>
-          </Col>
-          <Col lg="6" xs="12">
-            <Card className="card-chart">
-              <CardHeader>
-                <Row>
-                  <Col className="text-left" sm="6">
-                    <h5 className="card-category">Exchange</h5>
-                    <CardTitle tag="h2">
-                      <i className="tim-icons icon-coins text-danger" />{" "}
-                      Deposit LUSD
-                    </CardTitle>
-                  </Col>
-                </Row>
-              </CardHeader>
-              <CardBody>
-                <Col lg="8">amount LUSD
-                  <FormGroup>
-                    <Input
-                      defaultValue=""
-                      placeholder="0,00"
-                      type="text"
-                      onChange={this.handleChangeAmountSell}
-                    />
-                  </FormGroup>
-                </Col>
-                <ButtonGroup
-                  className="btn-group-toggle float-right"
-                  data-toggle="buttons"
-                >
-                  <Col sm="6">
-                  <Button
-                  className="btn-icon btn-round"
-                  color="danger"
-                  type="button"
-                  onClick={this.sellTokens}
-                  >
-                  <i className="tim-icons icon-send" />
-                  </Button>
-                  </Col>
-                </ButtonGroup>
-              </CardBody>
-              <CardHeader>
-                <Row>
-                  <Col className="text-left" sm="6">
-                    <CardTitle tag="h2">
-                      <i className="tim-icons icon-coins text-danger" />{" "}
-                      Claim ETH
-                    </CardTitle>
-                  </Col>
-                </Row>
-              </CardHeader>
+              ) : (
               <CardBody>
                 <h5 className="card-category"><Col lg="8">
-                  Deposited LUSD:  {isNaN(this.props.claimTokens) ? ("0,00") : (
-                          (this.props.claimTokens/10**20).toLocaleString(
-                                undefined, {minimumFractionDigits: 2,
-                                            maximumFractionDigits:2}))}
-                </Col></h5>
-                <h5 className="card-category"><Col lg="8">
-                  Claim ETH available: {isNaN(this.props.claimTokens) ? ("0,00") : (
-                    (this.props.claimTokens/this.props.rateUSD/10**18).toLocaleString(
-                                undefined, {minimumFractionDigits: 2,
+                  Maximum ETH withdraw: {isNaN(this.props.claimTokens) ? ("0.00") : (
+                    ((this.props.claimTokens/this.props.rateUSD/10**18)
+                      +(this.props.claimETH/10**18)).toLocaleString(
+                                "en", {minimumFractionDigits: 2,
                                             maximumFractionDigits:2}))}
                 </Col></h5>
                 <Col lg="8">amount ETH
                   <FormGroup>
                     <Input
                       defaultValue=""
-                      placeholder="0,00"
+                      placeholder="0.00"
                       type="text"
                       onChange={this.handleChangeAmountSellClaim}
                     />
@@ -355,15 +444,16 @@ class Dashboard extends React.Component {
                   <Col sm="6">
                   <Button
                   className="btn-icon btn-round"
-                  color="danger"
+                  color="success"
                   type="button"
-                  onClick={this.claimTokens}
+                  onClick={this.withdrawETH}
                   >
                   <i className="tim-icons icon-send" />
                   </Button>
                   </Col>
                 </ButtonGroup>
               </CardBody>
+            )}
             </Card>
           </Col>
         </Row>

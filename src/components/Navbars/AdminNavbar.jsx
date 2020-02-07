@@ -32,6 +32,8 @@ import {
   Nav,
   Container,
   UncontrolledAlert,
+  Col,
+  Row
 } from "reactstrap";
 
 class AdminNavbar extends React.Component {
@@ -66,10 +68,6 @@ class AdminNavbar extends React.Component {
     if (this.state.collapseOpen) {
       this.setState({
         color: "navbar-transparent"
-      });
-    } else {
-      this.setState({
-        color: "bg-white"
       });
     }
     this.setState({
@@ -111,6 +109,21 @@ class AdminNavbar extends React.Component {
                 {this.props.brandText}
               </NavbarBrand>
             </div>
+            <button
+              aria-expanded={false}
+              aria-label="Toggle navigation"
+              className="navbar-toggler navbar-toggler"
+              data-target="#navigation"
+              data-toggle="collapse"
+              id="navigation"
+              type="button"
+              onClick={this.toggleCollapse}
+            >
+              <span className="navbar-toggler-bar navbar-kebab" />
+              <span className="navbar-toggler-bar navbar-kebab" />
+              <span className="navbar-toggler-bar navbar-kebab" />
+            </button>
+            <Row>
             {this.props.metamask === true ?(
               <div className="section section-notifications" id="notifications">
                   <Container>
@@ -156,24 +169,17 @@ class AdminNavbar extends React.Component {
                         </UncontrolledAlert>
                     </Container>
               </div>)}
-            <button
-              aria-expanded={false}
-              aria-label="Toggle navigation"
-              className="navbar-toggler"
-              data-target="#navigation"
-              data-toggle="collapse"
-              id="navigation"
-              type="button"
-              onClick={this.toggleCollapse}
+              </Row>
+            <Collapse
+              navbar
+              isOpen={this.state.collapseOpen}
             >
-              <span className="navbar-toggler-bar navbar-kebab" />
-              <span className="navbar-toggler-bar navbar-kebab" />
-              <span className="navbar-toggler-bar navbar-kebab" />
-            </button>
-            <Collapse navbar isOpen={this.state.collapseOpen}>
               <Nav className="ml-auto" navbar>
                 <UncontrolledDropdown nav>
+                <Row>
+                  <Col xs="8">
                   <DropdownToggle
+                    className= "text-white"
                     caret
                     color="default"
                     data-toggle="dropdown"
@@ -186,16 +192,44 @@ class AdminNavbar extends React.Component {
                     <b className="caret d-none d-lg-block d-xl-block" />
                     <p className="d-lg-none">Account</p>
                   </DropdownToggle>
+                  </Col>
+                  <Col className="collapse-close text-right" xs="4">
+                    <button
+                      aria-expanded={this.state.collapseOpen}
+                      className="navbar-toggler"
+                      onClick={this.toggleCollapse}
+                      >
+                        <i className="tim-icons icon-simple-remove text-white" />
+                    </button>
+                  </Col>
+                </Row>
                   <DropdownMenu className="dropdown-navbar" right tag="ul">
                     <NavLink tag="li">
+                    {this.state.collapseOpen === false ?(
+                    <div>
                       <DropdownItem
-                        className="nav-item"
+                        className="nav-item text-grey"
                         href={url}
                         target="_blank"
                         rel="noopener noreferrer"
                       >
+                      <i className="tim-icons icon-single-02" />
                       {this.props.coinbase}
                       </DropdownItem>
+                    </div>
+                  ) : (
+                    <div>
+                      <DropdownItem
+                        className="nav-item text-white"
+                        href={url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                      <i className="tim-icons icon-single-02" />
+                      {this.props.coinbase}
+                      </DropdownItem>
+                    </div>
+                  )}
                     </NavLink>
                   </DropdownMenu>
                 </UncontrolledDropdown>

@@ -65,8 +65,9 @@ class Dashboard extends React.Component {
         instanceToken.methods.transfer(this.state.transferReceiver,
                                        this.state.transferAmount).send(
                                          {from: result,
-                                          value: 0})
-                                        )};
+                                          value: 0}).then(result =>
+                                            window.location.reload()
+                                          ))};
   };
   render() {
     return (
@@ -79,9 +80,9 @@ class Dashboard extends React.Component {
                 <h5 className="card-category">Balance USD</h5>
                 <CardTitle tag="h3">
                   <i className="tim-icons icon-wallet-43 text-info" />{" "}
-                  {isNaN(this.props.balanceTKN) ? ("0,00"
+                  {isNaN(this.props.balanceTKN) ? ("0.00"
                     ):(this.props.balanceTKN/10**20).toLocaleString(
-                                undefined, {minimumFractionDigits: 2,
+                                "en", {minimumFractionDigits: 2,
                                             maximumFractionDigits:2})} LUSD
                 </CardTitle>
               </CardHeader>
@@ -103,6 +104,9 @@ class Dashboard extends React.Component {
               </CardBody>
             </Card>
           </Col>
+
+
+        {/* CODE: EURO and GOLD token
           <Col lg="4">
             <Card className="card-chart">
               <CardHeader>
@@ -131,8 +135,12 @@ class Dashboard extends React.Component {
               </CardBody>
             </Card>
           </Col>
-        </Row>
-        <Row>
+          </Row>
+          <Row>
+        */}
+
+
+
           <Col lg="6" xs="12">
             <Card className="card-chart">
               <CardHeader>
@@ -171,6 +179,8 @@ class Dashboard extends React.Component {
                           <i className="fas fa-dollar-sign" />
                         </span>
                       </Button>
+
+                      {/* CODE: EURO and GOLD token
                       <Button
                         color="info"
                         id="1"
@@ -213,6 +223,8 @@ class Dashboard extends React.Component {
                           <i className="tim-icons icon-bank" />
                         </span>
                       </Button>
+                      */}
+
                     </ButtonGroup>
                   </Col>
                 </Row>
@@ -232,7 +244,7 @@ class Dashboard extends React.Component {
                   <FormGroup>
                     <Input
                       defaultValue=""
-                      placeholder="0,00"
+                      placeholder="0.00"
                       type="text"
                       onChange={this.handleChangeAmount}
                     />

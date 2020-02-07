@@ -27,35 +27,35 @@ var routes = [
     name: "Dashboard",
     icon: "tim-icons icon-chart-pie-36",
     component: Dashboard,
-    layout: "/admin"
+    layout: "/dapp"
   },
   {
     path: "/collateral",
     name: "Collateral",
     icon: "tim-icons icon-coins",
     component: Vault,
-    layout: "/admin"
+    layout: "/dapp"
   },
   {
     path: "/exchange",
     name: "Exchange",
     icon: "tim-icons icon-money-coins",
     component: Exchange,
-    layout: "/admin"
+    layout: "/dapp"
   },
   {
     path: "/liquidations",
     name: "Liquidations",
     icon: "tim-icons icon-bank",
     component: Liquidations,
-    layout: "/admin"
+    layout: "/dapp"
   },
   {
     path: "/economics",
     name: "Economics",
     icon: "tim-icons icon-chart-bar-32",
     component: Economics,
-    layout: "/admin"
+    layout: "/dapp"
   }
 ];
 export default routes;

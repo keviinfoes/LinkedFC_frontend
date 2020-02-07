@@ -96,7 +96,10 @@ class Vault extends React.Component {
       web3.eth.getCoinbase().then(result =>
         instanceColl.methods.openCP(this.state.CPamountTokenUSD).send(
                                          {from: result,
-                                          value: this.state.CPamountETH}))};
+                                          value: this.state.CPamountETH})
+                                          .then(result =>
+                                            window.location.reload()
+                                          ))};
   };
   closeCP = (id, ETH) => {
     const web3 = this.props.web3;
@@ -104,7 +107,9 @@ class Vault extends React.Component {
     if (this.props.web3Available !== "false") {
       web3.eth.getCoinbase().then(result =>
         instanceColl.methods.withdrawETHCP(ETH, id).send(
-                                         {from: result}))};
+                                         {from: result}).then(result =>
+                                           window.location.reload()
+                                         ))};
     this.setState({miniModal: !this.state.miniModal});
   };
   filterCP = () => {
@@ -117,7 +122,9 @@ class Vault extends React.Component {
     if (this.props.web3Available !== "false") {
       web3.eth.getCoinbase().then(result =>
         instanceColl.methods.transfer(this.state.CPTransfeReceiver, this.state.dataMiniModal[0]).send(
-                                         {from: result}))};
+                                         {from: result}).then(result =>
+                                           window.location.reload()
+                                         ))};
     this.setState({formModal: !this.state.formModal});
   };
   burnTokenCP = receiver => {
@@ -128,7 +135,9 @@ class Vault extends React.Component {
     if (this.props.web3Available !== "false") {
       web3.eth.getCoinbase().then(result =>
         instanceColl.methods.depositTokenCP(changeAmount , this.state.dataMiniModal[0]).send(
-                                         {from: result}))};
+                                         {from: result}).then(result =>
+                                           window.location.reload()
+                                         ))};
     this.setState({formModal_CP: !this.state.formModal_CP});
   };
   mintTokenCP = receiver => {
@@ -139,7 +148,9 @@ class Vault extends React.Component {
     if (this.props.web3Available !== "false") {
       web3.eth.getCoinbase().then(result =>
         instanceColl.methods.withdrawTokenCP(changeAmount, this.state.dataMiniModal[0]).send(
-                                         {from: result}))};
+                                         {from: result}).then(result =>
+                                           window.location.reload()
+                                         ))};
     this.setState({formModal_CP: !this.state.formModal_CP});
   };
   depositETHCP = receiver => {
@@ -151,7 +162,9 @@ class Vault extends React.Component {
       web3.eth.getCoinbase().then(result =>
         instanceColl.methods.depositETHCP(this.state.dataMiniModal[0]).send(
                                          {from: result,
-                                          value: changeAmount}))};
+                                          value: changeAmount}).then(result =>
+                                            window.location.reload()
+                                          ))};
     this.setState({formModal_CP: !this.state.formModal_CP});
   };
   withdrawETHCP = receiver => {
@@ -162,7 +175,9 @@ class Vault extends React.Component {
     if (this.props.web3Available !== "false") {
       web3.eth.getCoinbase().then(result =>
         instanceColl.methods.withdrawETHCP(changeAmount, this.state.dataMiniModal[0]).send(
-                                         {from: result}))};
+                                         {from: result}).then(result =>
+                                           window.location.reload()
+                                         ))};
     this.setState({formModal_CP: !this.state.formModal_CP});
   };
   renderTableData() {
@@ -173,13 +188,13 @@ class Vault extends React.Component {
       if (this.props.individualCPs.length > 0) {
         for(var i = 0; i < index; i++) {
           CP[i] = this.props.individualCPs[i];
-          if (CP[i] !== undefined) {
+          if (CP[i] !== undefined && CP[i][1] > 1) {
             rows[i] = (
              <tr key={i}>
                <td>{i+1}</td>
                <td>{CP[i][1] < 1 ? ("closed"):("open")}</td>
                <td>{(CP[i][1]/10**20).toLocaleString(
-                         undefined, {minimumFractionDigits: 2,
+                         "en", {minimumFractionDigits: 2,
                                      maximumFractionDigits:2})} LUSD
                </td>
                {CP[i][2] === 0 ? (<td/>):(
@@ -200,7 +215,7 @@ class Vault extends React.Component {
                   </Button>
                </td>)}
                <td>{(CP[i][0]/10**18).toLocaleString(
-                         undefined, {minimumFractionDigits: 2,
+                         "en", {minimumFractionDigits: 2,
                                      maximumFractionDigits:2})} ETH</td>
 
                {CP[i][2] === true ? (<td/>):(<td>
@@ -221,10 +236,10 @@ class Vault extends React.Component {
                   </td>)}
                <td className="text-center">
                    {isNaN((CP[i][1]/10**20)/(CP[i][0]/10**18)) ? (
-                       <div> 0,00 USD </div>
+                       <div> 0.00 USD </div>
                      ):(
                        <div>{((CP[i][1]/10**20)/(CP[i][0]/10**18) * 1.5).toLocaleString(
-                           undefined, {minimumFractionDigits: 2,
+                           "en", {minimumFractionDigits: 2,
                                        maximumFractionDigits:2})} USD
                        </div>
                    )}
@@ -301,14 +316,14 @@ class Vault extends React.Component {
                 <tbody>
                   <tr>
                   <td>Current rate: {(this.props.rateUSD/10**2).toLocaleString(
-                              undefined, {minimumFractionDigits: 2,
+                              "en", {minimumFractionDigits: 2,
                                           maximumFractionDigits:2})} USD</td>
                   </tr>
                   <tr>
                   <td
                    id="tooltip789511872"
                   >
-                  interest earnings: 1,5% per year</td>
+                  interest earnings: 1.5% per year</td>
 
                   <UncontrolledTooltip
                     delay={0}
@@ -366,6 +381,8 @@ class Vault extends React.Component {
                             <i className="fas fa-dollar-sign" />
                           </span>
                         </Button>
+
+                        {/* CODE: EURO and GOLD token
                         <Button
                           color="info"
                           id="1"
@@ -408,6 +425,8 @@ class Vault extends React.Component {
                             <i className="tim-icons icon-bank" />
                           </span>
                         </Button>
+                        */}
+
                       </ButtonGroup>
                     </Col>
                   </Row>
@@ -417,7 +436,7 @@ class Vault extends React.Component {
                     <FormGroup>
                       <Input
                         defaultValue=""
-                        placeholder="0,00"
+                        placeholder="0.00"
                         type="text"
                         onChange={this.handleChangeAmountTokenUSD}
                       />
@@ -427,7 +446,7 @@ class Vault extends React.Component {
                     <FormGroup>
                       <Input
                         defaultValue=""
-                        placeholder="0,00"
+                        placeholder="0.00"
                         type="text"
                         onChange={this.handleChangeETH}
                       />
@@ -468,21 +487,21 @@ class Vault extends React.Component {
                     <tbody>
                       <tr>
                         <td>{(this.state.CPamountETH / 10**18).toLocaleString(
-                                      undefined, {minimumFractionDigits: 2,
+                                      "en", {minimumFractionDigits: 2,
                                                   maximumFractionDigits:2})} ETH
                         </td>
                         <td>{isNaN(this.state.CPamountTokenUSD/this.state.CPamountETH) ? (
-                          <div> 0,00 USD </div>
+                          <div> 0.00 USD </div>
                         ):(
                           <div>{((this.state.CPamountTokenUSD / 10**2)/
                           (this.state.CPamountETH) * 1.5).toLocaleString(
-                                        undefined, {minimumFractionDigits: 2,
+                                        "en", {minimumFractionDigits: 2,
                                                     maximumFractionDigits:2})} USD
                           </div>
                         )}
                         </td>
                         <td>{(this.props.rateUSD/10**2).toLocaleString(
-                                      undefined, {minimumFractionDigits: 2,
+                                      "en", {minimumFractionDigits: 2,
                                                   maximumFractionDigits:2})} USD
                         </td>
                       </tr>
@@ -506,18 +525,16 @@ class Vault extends React.Component {
                   <i className="tim-icons icon-simple-remove text-white" />
                 </button>
                 <div className="modal-profile">
-                <h3 className="mb-0">
-                  Remove Collateral position {this.state.dataMiniModal[0]+1}
-                </h3>
+                    <i className="tim-icons icon-trash-simple" />
                 </div>
               </div>
               <div className="modal-body text-center">
                 <div/>
                 <p>Tokens burn: {(this.state.dataMiniModal[1]/10**20).toLocaleString(
-                              undefined, {minimumFractionDigits: 2,
+                              "en", {minimumFractionDigits: 2,
                                           maximumFractionDigits:2})}</p>
                 <p>ETH receive: {(this.state.dataMiniModal[2]/10**18).toLocaleString(
-                              undefined, {minimumFractionDigits: 2,
+                              "en", {minimumFractionDigits: 2,
                                           maximumFractionDigits:2})} </p>
               </div>
 
@@ -567,12 +584,12 @@ class Vault extends React.Component {
                 <tbody>
                   <tr>
                     <td>Tokens: {(this.state.dataMiniModal[1]/10**20).toLocaleString(
-                                  undefined, {minimumFractionDigits: 2,
+                                  "en", {minimumFractionDigits: 2,
                                               maximumFractionDigits:2})} LUSD</td>
                   </tr>
                   <tr>
                     <td>Collateral: {(this.state.dataMiniModal[2]/10**18).toLocaleString(
-                                  undefined, {minimumFractionDigits: 2,
+                                  "en", {minimumFractionDigits: 2,
                                               maximumFractionDigits:2})} ETH</td>
                   </tr>
                 </tbody>
@@ -649,7 +666,7 @@ class Vault extends React.Component {
                   <tr>
                     <td>Tokens: </td>
                     <td>{(change_tokens).toLocaleString(
-                                  undefined, {minimumFractionDigits: 2,
+                                  "en", {minimumFractionDigits: 2,
                                               maximumFractionDigits:2})}
                     </td>
                     <td>
@@ -659,7 +676,7 @@ class Vault extends React.Component {
                   <tr>
                     <td>Collateral: </td>
                     <td>{(change_ETH).toLocaleString(
-                                  undefined, {minimumFractionDigits: 2,
+                                  "en", {minimumFractionDigits: 2,
                                               maximumFractionDigits:2})}
                     </td>
                     <td>
@@ -671,7 +688,7 @@ class Vault extends React.Component {
                     <td>
                     {((change_tokens * 1)/
                     (change_ETH * 1) * 1.5).toLocaleString(
-                                  undefined, {minimumFractionDigits: 2,
+                                  "en", {minimumFractionDigits: 2,
                                               maximumFractionDigits:2})}
                     </td>
                     <td>USD</td>

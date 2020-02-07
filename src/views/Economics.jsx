@@ -94,7 +94,7 @@ class Economics extends React.Component {
                             ETH
                           </span>
                           <span className="d-block d-sm-none">
-                            <i className="fas fa-dollar-sign" />
+                            <i className="fab fa-ethereum" />
                           </span>
                         </Button>
                         <Button
@@ -116,7 +116,7 @@ class Economics extends React.Component {
                             LUSD
                           </span>
                           <span className="d-block d-sm-none">
-                            <i className="fas fa-euro-sign" />
+                            <i className="fas fa-dollar-sign" />
                           </span>
                         </Button>
                         <Button
@@ -194,21 +194,23 @@ class Economics extends React.Component {
                         <td>USD</td>
                         <td>{this.props.totalCP[0]}</td>
                         <td>{(this.props.totalCP[1]/10**18).toLocaleString(
-                                      undefined, {minimumFractionDigits: 2,
+                                      "en", {minimumFractionDigits: 2,
                                                   maximumFractionDigits:2})} ETH</td>
                         <td>{(this.props.totalCP[2]/10**20).toLocaleString(
-                                      undefined, {minimumFractionDigits: 2,
+                                      "en", {minimumFractionDigits: 2,
                                                   maximumFractionDigits:2})} LUSD</td>
                         <td>{(this.props.rateUSD/10**2).toLocaleString(
-                                    undefined, {minimumFractionDigits: 2,
+                                    "en", {minimumFractionDigits: 2,
                                                 maximumFractionDigits:2})} USD</td>
                         <td className="text-center">{
                           ((this.props.totalCP[1] * this.props.rateUSD) /
                           (this.props.totalCP[2] / 10**2)).toLocaleString(
-                                      undefined, {minimumFractionDigits: 0,
+                                      "en", {minimumFractionDigits: 0,
                                                   maximumFractionDigits:0})} %
                         </td>
                       </tr>
+
+                      {/* CODE: EURO and GOLD token
                       <tr>
                         <td>EURO</td>
                         <td>0,00</td>
@@ -225,6 +227,8 @@ class Economics extends React.Component {
                         <td>0,00</td>
                         <td className="text-center">0,00</td>
                       </tr>
+                      */}
+
                     </tbody>
                   </Table>
                 </CardBody>
