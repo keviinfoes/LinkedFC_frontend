@@ -135,9 +135,6 @@ class Liquidations extends React.Component {
       }
   }
   render() {
-
-    console.log(this.state.liqActive)
-
     return (
       <>
         <div className="content">
